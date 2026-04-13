@@ -1,4 +1,4 @@
-# Rent Price Predictor Pro
+# Rent Price Predictor
 
 A Python-based web application that predicts monthly residential rents in India using **Linear Regression**.
 
@@ -29,9 +29,8 @@ The application uses a trained Machine Learning pipeline to process property dat
 ```
 
 ## 🛠 Features
-*   **Real Model Prediction**: Uses the `.pkl` file for all calculations.
-*   **Input Validation**: Blocks negative numbers and symbols (`+`, `-`, `e`) in numeric fields.
-*   **Premium UI**: Centered glassmorphic dashboard with a fixed background image.
+*   **Model-Driven Estimations**: Utilizes a serialized Scikit-learn pipeline for deterministic price calculations.
+*   **Data Integrity & Validation**: Implements strict front-end and back-end checks to ensure valid input ranges.
 
 ## ⚙️ Setup
 1.  **Install Required Libraries**:
