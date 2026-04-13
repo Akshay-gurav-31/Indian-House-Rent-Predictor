@@ -3,7 +3,7 @@
 A Python-based web application that predicts monthly residential rents in India using **Linear Regression**.
 
 ## 📸 Snapshot
-![Application Background](static/home.png)
+![Application Snapshot](static/snapshot.png)
 
 ## 📊 How It Works
 The application uses a trained Machine Learning pipeline to process property data and generate estimates.
