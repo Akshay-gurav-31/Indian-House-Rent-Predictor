@@ -1,699 +1,1074 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Rent Price Predictor Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-/* ─── THEME TOKENS ─────────────────────────────────────── */
-:root {
-  --ease: cubic-bezier(.4,0,.2,1);
-  --tr: all 0.38s var(--ease);
-  
-  --bg:            url("{{ url_for('static', filename='home.png') }}");
-  --bg-overlay:    linear-gradient(rgba(242,244,251,0.45), rgba(242,244,251,0.45));
-  --bg2:           #eaecf8;
-  --bg3:           #e2e5f5;
-  --glass:         rgba(255,255,255,0.78);
-  --glass-b:       rgba(80,110,220,0.1);
-  --glass-hov:     rgba(255,255,255,0.9);
-  --text:          #0d1130;
-  --text2:         #4a5578;
-  --text3:         #9099bc;
-  --accent:        #3355ff;
-  --accent2:       #7c3aed;
-  --accent-rgb:    51,85,255;
-  --accent2-rgb:   124,58,237;
-  --glow:          rgba(51,85,255,0.12);
-  --glow2:         rgba(124,58,237,0.09);
-  --card:          rgba(255,255,255,0.88);
-  --input:         rgba(248,250,255,0.92);
-  --input-b:       rgba(51,85,255,0.1);
-  --res-bg:        rgba(51,85,255,0.045);
-  --res-b:         rgba(51,85,255,0.16);
-  --shadow:        0 40px 100px rgba(20,40,160,0.07);
-  --divider:       rgba(20,40,160,0.08);
-  --chip-bg:       rgba(51,85,255,0.06);
-  --chip-text:     #3355ff;
-  --chip-b:        rgba(51,85,255,0.14);
-  --tag-bg:        rgba(51,85,255,0.07);
-  --tag-text:      #3355ff;
-  --btn-text:      #fff;
-  --orb-a:         rgba(51,85,255,0.08);
-  --orb-b:         rgba(124,58,237,0.06);
-  --orb-c:         rgba(96,165,250,0.04);
-  --scatone:       rgba(20,40,160,0.016);
-  --icon-stroke:   #9099bc;
-  --icon-focus:    #3355ff;
-}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rent Price Predictor Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ─── THEME TOKENS ─────────────────────────────────────── */
+        :root {
+            --ease: cubic-bezier(.4, 0, .2, 1);
+            --tr: all 0.38s var(--ease);
 
-/* ─── BASE ──────────────────────────────────────────────── */
-*, *::before, *::after { 
-  box-sizing: border-box; 
-  margin: 0; padding: 0; 
-  -webkit-tap-highlight-color: transparent; 
-}
-html { 
-  scroll-behavior: smooth; 
-  height: -webkit-fill-available;
-}
-body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: var(--bg-overlay), var(--bg);
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  color: var(--text);
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-  overflow-x: hidden;
-  transition: background 0.45s var(--ease);
-  position: relative;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
+            --bg: url("{{ url_for('static', filename='home.png') }}");
+            --bg-overlay: linear-gradient(rgba(242, 244, 251, 0.45), rgba(242, 244, 251, 0.45));
+            --bg2: #eaecf8;
+            --bg3: #e2e5f5;
+            --glass: rgba(255, 255, 255, 0.78);
+            --glass-b: rgba(80, 110, 220, 0.1);
+            --glass-hov: rgba(255, 255, 255, 0.9);
+            --text: #0d1130;
+            --text2: #4a5578;
+            --text3: #9099bc;
+            --accent: #3355ff;
+            --accent2: #7c3aed;
+            --accent-rgb: 51, 85, 255;
+            --accent2-rgb: 124, 58, 237;
+            --glow: rgba(51, 85, 255, 0.12);
+            --glow2: rgba(124, 58, 237, 0.09);
+            --card: rgba(255, 255, 255, 0.88);
+            --input: rgba(248, 250, 255, 0.92);
+            --input-b: rgba(51, 85, 255, 0.1);
+            --res-bg: rgba(51, 85, 255, 0.045);
+            --res-b: rgba(51, 85, 255, 0.16);
+            --shadow: 0 40px 100px rgba(20, 40, 160, 0.07);
+            --divider: rgba(20, 40, 160, 0.08);
+            --chip-bg: rgba(51, 85, 255, 0.06);
+            --chip-text: #3355ff;
+            --chip-b: rgba(51, 85, 255, 0.14);
+            --tag-bg: rgba(51, 85, 255, 0.07);
+            --tag-text: #3355ff;
+            --btn-text: #fff;
+            --orb-a: rgba(51, 85, 255, 0.08);
+            --orb-b: rgba(124, 58, 237, 0.06);
+            --orb-c: rgba(96, 165, 250, 0.04);
+            --scatone: rgba(20, 40, 160, 0.016);
+            --icon-stroke: #9099bc;
+            --icon-focus: #3355ff;
+        }
 
-  /* Perfect Center */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+        /* ─── BASE ──────────────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-/* ─── ATMOSPHERE ────────────────────────────────────────── */
-.scatone {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background-image:
-    radial-gradient(circle, var(--scatone) 1px, transparent 1px),
-    radial-gradient(circle, var(--scatone) 0.8px, transparent 0.8px);
-  background-size: 28px 28px, 14px 14px;
-  background-position: 0 0, 7px 7px;
-}
-.orb { position: fixed; border-radius: 50%; pointer-events: none; transition: var(--tr); opacity: 0.8; }
-.orb-a { width:640px;height:640px;top:-180px;left:-180px;background:radial-gradient(circle,var(--orb-a),transparent 68%);z-index:0; }
-.orb-b { width:520px;height:520px;bottom:-160px;right:-130px;background:radial-gradient(circle,var(--orb-b),transparent 68%);z-index:0; }
-.orb-c { width:340px;height:340px;top:45%;left:55%;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--orb-c),transparent 68%);z-index:0; }
+        html {
+            scroll-behavior: smooth;
+            height: -webkit-fill-available;
+        }
 
-@media (max-width: 768px) {
-  .orb-a { width: 400px; height: 400px; top: -100px; left: -100px; }
-  .orb-b { width: 350px; height: 350px; bottom: -80px; right: -80px; }
-  .orb-c { display: none; }
-}
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-overlay), var(--bg);
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: var(--text);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow-x: hidden;
+            transition: background 0.45s var(--ease);
+            position: relative;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
 
-/* ─── MAIN ───────────────────────────────────────────────── */
-main {
-  position: relative; z-index: 10;
-  width: 100%;
-  max-width: 1080px; margin: 0 auto;
-  padding: 40px 20px;
-}
+            /* Perfect Center */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-/* ─── HERO ───────────────────────────────────────────────── */
-.hero { text-align: center; margin-bottom: clamp(16px, 3.5vh, 28px); }
-h1 {
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(28px, 5vw, 48px);
-  font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 1.05;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-h1 .gradient-text {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero-sub {
-  font-size: 14.5px; font-weight: 400;
-  color: var(--text2); max-width: 520px; margin: 0 auto;
-  line-height: 1.5;
-}
+        /* ─── ATMOSPHERE ────────────────────────────────────────── */
+        .scatone {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(circle, var(--scatone) 1px, transparent 1px),
+                radial-gradient(circle, var(--scatone) 0.8px, transparent 0.8px);
+            background-size: 28px 28px, 14px 14px;
+            background-position: 0 0, 7px 7px;
+        }
 
-/* ─── CARD & SPLIT LAYOUT ─────────────────────────────────── */
-.card {
-  background: var(--card);
-  border: 1px solid var(--glass-b);
-  border-radius: clamp(24px, 4vw, 32px);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  animation: fadeUp 0.8s var(--ease) both;
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            transition: var(--tr);
+            opacity: 0.8;
+        }
 
-.split-container {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-}
-@media (max-width: 920px) {
-  .split-container { grid-template-columns: 1fr; }
-}
+        .orb-a {
+            width: 640px;
+            height: 640px;
+            top: -180px;
+            left: -180px;
+            background: radial-gradient(circle, var(--orb-a), transparent 68%);
+            z-index: 0;
+        }
 
-.form-pane {
-  padding: clamp(20px, 4vw, 36px);
-  border-right: 1px solid var(--divider);
-}
-@media (max-width: 920px) {
-  .form-pane { border-right: none; border-bottom: 1px solid var(--divider); }
-}
+        .orb-b {
+            width: 520px;
+            height: 520px;
+            bottom: -160px;
+            right: -130px;
+            background: radial-gradient(circle, var(--orb-b), transparent 68%);
+            z-index: 0;
+        }
 
-.result-pane {
-  display: flex; flex-direction: column;
-  padding: clamp(20px, 4vw, 36px);
-  background: rgba(var(--accent-rgb), 0.015);
-  position: relative;
-  transition: background 0.4s var(--ease);
-}
-.result-pane.active {
-  background: rgba(var(--accent-rgb), 0.045);
-}
+        .orb-c {
+            width: 340px;
+            height: 340px;
+            top: 45%;
+            left: 55%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, var(--orb-c), transparent 68%);
+            z-index: 0;
+        }
 
-/* ─── FORM ELEMENTS ───────────────────────────────────────── */
-.sec-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--text3);
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 20px;
-}
-.sec-title::before {
-  content: ''; display: block;
-  width: 18px; height: 2px;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  border-radius: 99px;
-}
+        @media (max-width: 768px) {
+            .orb-a {
+                width: 400px;
+                height: 400px;
+                top: -100px;
+                left: -100px;
+            }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px 18px;
-}
-@media (max-width: 540px) { .grid { grid-template-columns: 1fr; gap: 14px; } }
+            .orb-b {
+                width: 350px;
+                height: 350px;
+                bottom: -80px;
+                right: -80px;
+            }
 
-.field { display: flex; flex-direction: column; gap: 6px; }
-.field label {
-  font-size: 12px; font-weight: 500;
-  color: var(--text2); padding-left: 2px;
-}
-.input-wrap { position: relative; }
-.input-icon {
-  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  pointer-events: none; display: flex; align-items: center;
-  color: var(--icon-stroke); transition: color 0.25s;
-}
-.input-wrap:focus-within .input-icon { color: var(--icon-focus); }
-input, select {
-  width: 100%;
-  padding: 11px 12px 11px 40px;
-  font-family: inherit;
-  font-size: 15px; 
-  font-weight: 400;
-  color: var(--text);
-  background: var(--input);
-  border: 1px solid var(--input-b);
-  border-radius: 10px;
-  outline: none;
-  -webkit-appearance: none; appearance: none;
-  transition: all 0.26s var(--ease);
-}
-input::placeholder { color: var(--text3); font-size: 14px; }
-input:focus, select:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px var(--glow);
-  background: var(--glass-hov);
-}
-select option { background: #fff; color: #000; }
-.chevron {
-  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  pointer-events: none; color: var(--text3);
-  display: flex; align-items: center;
-}
+            .orb-c {
+                display: none;
+            }
+        }
 
-.divider { height: 1px; background: var(--divider); margin: 24px 0; }
+        /* ─── MAIN ───────────────────────────────────────────────── */
+        main {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
 
-.btn-row { display: grid; grid-template-columns: 1fr 2.2fr; gap: 12px; }
-@media (max-width: 480px) { .btn-row { grid-template-columns: 1fr; } }
+        /* ─── HERO ───────────────────────────────────────────────── */
+        .hero {
+            text-align: center;
+            margin-bottom: clamp(16px, 3.5vh, 28px);
+        }
 
-.btn-ghost {
-  padding: 15px 20px; font-family: inherit;
-  font-size: 14px; font-weight: 600;
-  color: var(--text2); background: var(--glass);
-  border: 1px solid var(--glass-b); border-radius: 12px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: var(--tr);
-}
-.btn-ghost:hover { background: var(--glass-hov); color: var(--text); }
-.btn-ghost:active { transform: scale(0.97); }
+        h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 800;
+            letter-spacing: -0.045em;
+            line-height: 1.05;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
 
-.btn-predict {
-  padding: 15px 24px; font-family: inherit;
-  font-size: 15px; font-weight: 700;
-  color: var(--btn-text);
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-  border: none; border-radius: 12px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-  box-shadow: 0 10px 30px var(--glow);
-  transition: var(--tr);
-  position: relative; overflow: hidden;
-}
-.btn-predict:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 14px 36px var(--glow); }
-.btn-predict:active:not(:disabled) { transform: translateY(0) scale(0.98); }
-.btn-predict:disabled {
-  opacity: 0.55; cursor: not-allowed; filter: grayscale(0.4); 
-  box-shadow: none; transform: none;
-}
-.btn-predict.loading .btn-label { display: none; }
-.btn-predict.loading .btn-spin  { display: flex; }
-.btn-spin { display: none; align-items: center; justify-content: center; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.ring {
-  width: 20px; height: 20px; border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.25);
-  border-top-color: #fff;
-  animation: spin 0.7s linear infinite;
-}
+        h1 .gradient-text {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-/* ─── RESULT DASHBOARD ────────────────────────────────────── */
-.result-placeholder {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center; color: var(--text3);
-  transition: opacity 0.3s var(--ease);
-}
-.result-pane.active .result-placeholder { display: none; }
+        .hero-sub {
+            font-size: 14.5px;
+            font-weight: 400;
+            color: var(--text2);
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
 
-.result-content {
-  display: none; height: 100%;
-  flex-direction: column; justify-content: space-between;
-}
-.result-pane.active .result-content { display: flex; animation: revealResult 0.7s var(--ease) both; }
+        /* ─── CARD & SPLIT LAYOUT ─────────────────────────────────── */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--glass-b);
+            border-radius: clamp(24px, 4vw, 32px);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeUp 0.8s var(--ease) both;
+        }
 
-@keyframes revealResult {
-  from { opacity: 0; transform: scale(0.97) translateY(15px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
 
-.result-header { margin-bottom: 28px; }
-.result-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--text3);
-  margin-bottom: 10px;
-}
-.result-amount {
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(34px, 5.5vw, 50px);
-  font-weight: 800; letter-spacing: -0.04em;
-  line-height: 1;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.result-unit {
-  font-size: 17px; font-weight: 400;
-  margin-left: 5px; -webkit-text-fill-color: var(--text2);
-}
-.result-meta {
-  font-size: 13px; color: var(--text3);
-  margin-top: 14px; display: flex; align-items: center; gap: 8px;
-}
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.chips { display: flex; flex-direction: column; gap: 12px; margin: 32px 0; }
-.chip-row {
-  display: flex; align-items: center; gap: 14px;
-  padding: 13px 18px; background: var(--bg);
-  border: 1px solid var(--divider); border-radius: 16px;
-  font-size: 14px; font-weight: 500; color: var(--text2);
-}
-.chip-icon { color: var(--accent); opacity: 0.7; }
+        .split-container {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+        }
 
-.conf-card {
-  margin-top: auto; padding: 22px;
-  background: rgba(255,255,255,0.45);
-  border: 1px solid var(--glass-b); border-radius: 20px;
-}
-.conf-label { 
-  display: block; font-size: 11px; font-weight: 600; 
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--text3); margin-bottom: 14px; 
-}
-.conf-val-row {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 12px;
-}
-.conf-val { font-size: 22px; font-weight: 700; color: var(--accent); }
-.conf-track {
-  height: 7px; background: var(--divider);
-  border-radius: 99px; overflow: hidden;
-}
-.conf-fill {
-  height: 100%; border-radius: 99px;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  width: 0%; transition: width 1.2s var(--ease);
-}
+        @media (max-width: 920px) {
+            .split-container {
+                grid-template-columns: 1fr;
+            }
+        }
 
-/* ─── CUSTOM MODAL ───────────────────────────────────────── */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 1000;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.4s var(--ease);
-}
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .form-pane {
+            padding: clamp(20px, 4vw, 36px);
+            border-right: 1px solid var(--divider);
+        }
 
-.modal-content {
-  background: var(--card);
-  border: 1px solid var(--glass-b);
-  border-radius: 28px;
-  width: 90%; max-width: 420px;
-  padding: 36px;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.18);
-  transform: translateY(20px);
-  transition: transform 0.4s var(--ease);
-  text-align: center;
-}
-.modal-overlay.active .modal-content { transform: translateY(0); }
+        @media (max-width: 920px) {
+            .form-pane {
+                border-right: none;
+                border-bottom: 1px solid var(--divider);
+            }
+        }
 
-.modal-icon {
-  width: 52px; height: 52px; border-radius: 50%;
-  background: var(--chip-bg); color: var(--accent);
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 24px;
-}
-.modal-title {
-  font-size: 19px; font-weight: 700; color: var(--text);
-  margin-bottom: 12px; letter-spacing: -0.01em;
-}
-.modal-text {
-  font-size: 14.5px; color: var(--text2);
-  line-height: 1.6; margin-bottom: 28px;
-}
-.modal-btn {
-  width: 100%; padding: 15px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: #fff; border: none; border-radius: 12px;
-  font-size: 15px; font-weight: 600; cursor: pointer;
-  transition: var(--tr);
-}
-.modal-btn:hover { transform: translateY(-1.5px); box-shadow: 0 10px 24px var(--glow); }
+        .result-pane {
+            display: flex;
+            flex-direction: column;
+            padding: clamp(20px, 4vw, 36px);
+            background: rgba(var(--accent-rgb), 0.015);
+            position: relative;
+            transition: background 0.4s var(--ease);
+        }
 
-/* ─── SVG ICONS ──────────────────────────────────────────── */
-.icon { display: block; flex-shrink: 0; }
-</style>
+        .result-pane.active {
+            background: rgba(var(--accent-rgb), 0.045);
+        }
+
+        /* ─── FORM ELEMENTS ───────────────────────────────────────── */
+        .sec-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sec-title::before {
+            content: '';
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 99px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px 18px;
+        }
+
+        @media (max-width: 540px) {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text2);
+            padding-left: 2px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            color: var(--icon-stroke);
+            transition: color 0.25s;
+        }
+
+        .input-wrap:focus-within .input-icon {
+            color: var(--icon-focus);
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px 12px 11px 40px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 400;
+            color: var(--text);
+            background: var(--input);
+            border: 1px solid var(--input-b);
+            border-radius: 10px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            transition: all 0.26s var(--ease);
+        }
+
+        input::placeholder {
+            color: var(--text3);
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--glow);
+            background: var(--glass-hov);
+        }
+
+        select option {
+            background: #fff;
+            color: #000;
+        }
+
+        .chevron {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--text3);
+            display: flex;
+            align-items: center;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--divider);
+            margin: 24px 0;
+        }
+
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 2.2fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .btn-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn-ghost {
+            padding: 15px 20px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text2);
+            background: var(--glass);
+            border: 1px solid var(--glass-b);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--tr);
+        }
+
+        .btn-ghost:hover {
+            background: var(--glass-hov);
+            color: var(--text);
+        }
+
+        .btn-ghost:active {
+            transform: scale(0.97);
+        }
+
+        .btn-predict {
+            padding: 15px 24px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--btn-text);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px var(--glow);
+            transition: var(--tr);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-predict:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 36px var(--glow);
+        }
+
+        .btn-predict:active:not(:disabled) {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-predict:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            filter: grayscale(0.4);
+            box-shadow: none;
+            transform: none;
+        }
+
+        .btn-predict.loading .btn-label {
+            display: none;
+        }
+
+        .btn-predict.loading .btn-spin {
+            display: flex;
+        }
+
+        .btn-spin {
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .ring {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-top-color: #fff;
+            animation: spin 0.7s linear infinite;
+        }
+
+        /* ─── RESULT DASHBOARD ────────────────────────────────────── */
+        .result-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text3);
+            transition: opacity 0.3s var(--ease);
+        }
+
+        .result-pane.active .result-placeholder {
+            display: none;
+        }
+
+        .result-content {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .result-pane.active .result-content {
+            display: flex;
+            animation: revealResult 0.7s var(--ease) both;
+        }
+
+        @keyframes revealResult {
+            from {
+                opacity: 0;
+                transform: scale(0.97) translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .result-header {
+            margin-bottom: 28px;
+        }
+
+        .result-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text3);
+            margin-bottom: 10px;
+        }
+
+        .result-amount {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(34px, 5.5vw, 50px);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-unit {
+            font-size: 17px;
+            font-weight: 400;
+            margin-left: 5px;
+            -webkit-text-fill-color: var(--text2);
+        }
+
+        .result-meta {
+            font-size: 13px;
+            color: var(--text3);
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chips {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 32px 0;
+        }
+
+        .chip-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 18px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--divider);
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .chip-icon {
+            color: var(--accent);
+            opacity: 0.7;
+        }
+
+        .conf-card {
+            margin-top: auto;
+            padding: 22px;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid var(--glass-b);
+            border-radius: 20px;
+        }
+
+        .conf-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text3);
+            margin-bottom: 14px;
+        }
+
+        .conf-val-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .conf-val {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .conf-track {
+            height: 7px;
+            background: var(--divider);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .conf-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            width: 0%;
+            transition: width 1.2s var(--ease);
+        }
+
+        /* ─── CUSTOM MODAL ───────────────────────────────────────── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s var(--ease);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border: 1px solid var(--glass-b);
+            border-radius: 28px;
+            width: 90%;
+            max-width: 420px;
+            padding: 36px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.18);
+            transform: translateY(20px);
+            transition: transform 0.4s var(--ease);
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--chip-bg);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .modal-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .modal-text {
+            font-size: 14.5px;
+            color: var(--text2);
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--tr);
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-1.5px);
+            box-shadow: 0 10px 24px var(--glow);
+        }
+
+        /* ─── SVG ICONS ──────────────────────────────────────────── */
+        .icon {
+            display: block;
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 
 
 <body>
 
-<!-- Atmosphere -->
-<div class="scatone" aria-hidden="true"></div>
-<div class="orb orb-a" aria-hidden="true"></div>
-<div class="orb orb-b" aria-hidden="true"></div>
-<div class="orb orb-c" aria-hidden="true"></div>
+    <!-- Atmosphere -->
+    <div class="scatone" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+    <div class="orb orb-c" aria-hidden="true"></div>
 
-<!-- Custom Modal -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-content">
-    <div class="modal-icon" id="modalIcon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>
-      </svg>
+    <!-- Custom Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <circle cx="12" cy="16" r="0.5" fill="currentColor" />
+                </svg>
+            </div>
+            <div class="modal-title" id="modalTitle">Notice</div>
+            <div class="modal-text" id="modalText">Please check your inputs and try again.</div>
+            <button class="modal-btn" onclick="closeModal()">Understood</button>
+        </div>
     </div>
-    <div class="modal-title" id="modalTitle">Notice</div>
-    <div class="modal-text" id="modalText">Please check your inputs and try again.</div>
-    <button class="modal-btn" onclick="closeModal()">Understood</button>
-  </div>
-</div>
 
-<!-- ─── MAIN ────────────────────────────────────────────── -->
-<main>
+    <!-- ─── MAIN ────────────────────────────────────────────── -->
+    <main>
 
-  <!-- Hero -->
-  <div class="hero">
-    <h1>Predict Your<br/><span class="gradient-text">Rent Accurately</span></h1>
-    <p class="hero-sub">Enter your property details and receive an intelligent rent estimate drawn from live market signals.</p>
-  </div>
-
-  <!-- Card -->
-  <div class="card">
-    <div class="split-container">
-      
-      <!-- Input Side -->
-      <div class="form-pane">
-        <div class="sec-title">Property Details</div>
-
-        <div class="grid">
-          <!-- Area -->
-          <div class="field">
-            <label for="area">Area (sq ft)</label>
-            <div class="input-wrap">
-              <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M4 9h16"/></svg></span>
-              <input type="number" id="area" placeholder="1200" min="100"/>
-            </div>
-          </div>
-
-          <!-- Property Type -->
-          <div class="field">
-            <label for="proptype">Property Type</label>
-            <div class="input-wrap">
-              <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
-              <select id="proptype">
-                <option value="Apartment" selected>Apartment</option>
-                <option value="Independent House">Independent House</option>
-                <option value="Villa">Villa</option>
-                <option value="Studio">Studio</option>
-                <option value="Builder Floor">Builder Floor</option>
-              </select>
-              <span class="chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>
-            </div>
-          </div>
-
-          <!-- Bedrooms -->
-          <div class="field">
-            <label for="bedrooms">Bedrooms</label>
-            <div class="input-wrap">
-              <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20v-8a2 2 0 012-2h14a2 2 0 012 2v8M5 10V6a2 2 0 012-2h10a2 2 0 012 2v4M3 14h18"/></svg></span>
-              <input type="number" id="bedrooms" placeholder="2" min="1" max="10"/>
-            </div>
-          </div>
-
-          <!-- Bathrooms -->
-          <div class="field">
-            <label for="bathrooms">Bathrooms</label>
-            <div class="input-wrap">
-              <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16v4a4 4 0 01-4 4H8a4 4 0 01-4-4v-4zm2 0V5a2 2 0 012-2h1"/><circle cx="6" cy="4" r="1"/></svg></span>
-              <input type="number" id="bathrooms" placeholder="1" min="1" max="8"/>
-            </div>
-          </div>
-
-          <!-- Furnish Type -->
-          <div class="field">
-            <label for="furnish">Furnish Type</label>
-            <div class="input-wrap">
-              <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18M6 20v-4a2 2 0 012-2h8a2 2 0 012 2v4"/></svg></span>
-              <select id="furnish">
-                <option value="Furnished">Furnished</option>
-                <option value="Semi-Furnished" selected>Semi-Furnished</option>
-                <option value="Unfurnished">Unfurnished</option>
-              </select>
-              <span class="chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>
-            </div>
-          </div>
-
-          <!-- City -->
-          <div class="field">
-            <label for="city">City</label>
-            <div class="input-wrap">
-              <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
-              <select id="city">
-                <option value="Ahmedabad">Ahmedabad</option>
-                <option value="Bangalore">Bangalore</option>
-                <option value="Chennai">Chennai</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Hyderabad">Hyderabad</option>
-                <option value="Kolkata">Kolkata</option>
-                <option value="Mumbai" selected>Mumbai</option>
-                <option value="Pune">Pune</option>
-              </select>
-              <span class="chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>
-            </div>
-          </div>
-
-          <!-- Seller Type (Full width) -->
-          <div class="field" style="grid-column: 1 / -1">
-            <label for="seller">Seller Type</label>
-            <div class="input-wrap">
-              <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg></span>
-              <select id="seller">
-                <option value="OWNER" selected>Owner</option>
-                <option value="AGENT">Agent</option>
-                <option value="BUILDER">Builder</option>
-              </select>
-              <span class="chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>
-            </div>
-          </div>
-
+        <!-- Hero -->
+        <div class="hero">
+            <h1>Predict Your<br /><span class="gradient-text">Rent Accurately</span></h1>
+            <p class="hero-sub">Enter your property details and receive an intelligent rent estimate drawn from live
+                market signals.</p>
         </div>
 
-        <div class="divider"></div>
+        <!-- Card -->
+        <div class="card">
+            <div class="split-container">
 
-        <div class="btn-row">
-          <button class="btn-ghost" onclick="clearForm()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Clear All
-          </button>
-          <button class="btn-predict" id="predictBtn" onclick="predict()" disabled>
-            <span class="btn-label" style="display:flex;align-items:center;gap:10px">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              Predict Rent
-            </span>
-            <span class="btn-spin"><div class="ring"></div></span>
-          </button>
-        </div>
-      </div>
+                <!-- Input Side -->
+                <div class="form-pane">
+                    <div class="sec-title">Property Details</div>
 
-      <!-- Result Side -->
-      <div class="result-pane" id="resultPane">
-        
-        <!-- Placeholder -->
-        <div class="result-placeholder" id="resultPlaceholder">
-          <div style="opacity: 0.12; margin-bottom: 24px;">
-            <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          </div>
-          <p style="font-size: 15px; font-weight: 500;">Ready to Predict</p>
-          <p style="font-size: 13.5px; opacity: 0.6; margin-top: 6px;">Provide details to generate dashboard</p>
-        </div>
+                    <div class="grid">
+                        <!-- Area -->
+                        <div class="field">
+                            <label for="area">Area (sq ft)</label>
+                            <div class="input-wrap">
+                                <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <rect x="4" y="4" width="16" height="16" rx="2" />
+                                        <path d="M9 4v16M4 9h16" />
+                                    </svg></span>
+                                <input type="number" id="area" placeholder="1200" min="100" />
+                            </div>
+                        </div>
 
-        <!-- Real Content -->
-        <div class="result-content" id="resultContent">
-          <div class="result-header">
-            <div class="result-label">Estimated Monthly Rent</div>
-            <div class="result-amount" id="resultAmount">₹ 0<span class="result-unit">/ mo</span></div>
-            <div class="result-meta" id="resultMeta">—</div>
-          </div>
+                        <!-- Property Type -->
+                        <div class="field">
+                            <label for="proptype">Property Type</label>
+                            <div class="input-wrap">
+                                <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                                        <rect x="14" y="14" width="7" height="7" rx="1" />
+                                    </svg></span>
+                                <select id="proptype">
+                                    <option value="Apartment" selected>Apartment</option>
+                                    <option value="Independent House">Independent House</option>
+                                    <option value="Villa">Villa</option>
+                                    <option value="Studio">Studio</option>
+                                    <option value="Builder Floor">Builder Floor</option>
+                                </select>
+                                <span class="chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg></span>
+                            </div>
+                        </div>
 
-          <div class="chips" id="resultChips">
-            <!-- Dynamic Icons will be added here via JS -->
-          </div>
+                        <!-- Bedrooms -->
+                        <div class="field">
+                            <label for="bedrooms">Bedrooms</label>
+                            <div class="input-wrap">
+                                <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path
+                                            d="M3 20v-8a2 2 0 012-2h14a2 2 0 012 2v8M5 10V6a2 2 0 012-2h10a2 2 0 012 2v4M3 14h18" />
+                                    </svg></span>
+                                <input type="number" id="bedrooms" placeholder="2" min="1" max="10" />
+                            </div>
+                        </div>
 
-          <div class="conf-card">
-            <div class="conf-val-row">
-              <span class="conf-label">Model Reliability (R²)</span>
-              <span class="conf-val" id="confVal">—</span>
-            </div>
-            <div class="conf-track"><div class="conf-fill" id="confFill"></div></div>
-          </div>
-        </div>
+                        <!-- Bathrooms -->
+                        <div class="field">
+                            <label for="bathrooms">Bathrooms</label>
+                            <div class="input-wrap">
+                                <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M4 12h16v4a4 4 0 01-4 4H8a4 4 0 01-4-4v-4zm2 0V5a2 2 0 012-2h1" />
+                                        <circle cx="6" cy="4" r="1" />
+                                    </svg></span>
+                                <input type="number" id="bathrooms" placeholder="1" min="1" max="8" />
+                            </div>
+                        </div>
 
-      </div><!-- /result-pane -->
+                        <!-- Furnish Type -->
+                        <div class="field">
+                            <label for="furnish">Furnish Type</label>
+                            <div class="input-wrap">
+                                <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M3 20h18M6 20v-4a2 2 0 012-2h8a2 2 0 012 2v4" />
+                                    </svg></span>
+                                <select id="furnish">
+                                    <option value="Furnished">Furnished</option>
+                                    <option value="Semi-Furnished" selected>Semi-Furnished</option>
+                                    <option value="Unfurnished">Unfurnished</option>
+                                </select>
+                                <span class="chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg></span>
+                            </div>
+                        </div>
 
-    </div><!-- /split-container -->
-  </div><!-- /card -->
+                        <!-- City -->
+                        <div class="field">
+                            <label for="city">City</label>
+                            <div class="input-wrap">
+                                <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                                        <circle cx="12" cy="10" r="3" />
+                                    </svg></span>
+                                <select id="city">
+                                    <option value="Ahmedabad">Ahmedabad</option>
+                                    <option value="Bangalore">Bangalore</option>
+                                    <option value="Chennai">Chennai</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Hyderabad">Hyderabad</option>
+                                    <option value="Kolkata">Kolkata</option>
+                                    <option value="Mumbai" selected>Mumbai</option>
+                                    <option value="Pune">Pune</option>
+                                </select>
+                                <span class="chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg></span>
+                            </div>
+                        </div>
 
-</main>
+                        <!-- Seller Type (Full width) -->
+                        <div class="field" style="grid-column: 1 / -1">
+                            <label for="seller">Seller Type</label>
+                            <div class="input-wrap">
+                                <span class="input-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="8" r="4" />
+                                        <path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" />
+                                    </svg></span>
+                                <select id="seller">
+                                    <option value="OWNER" selected>Owner</option>
+                                    <option value="AGENT">Agent</option>
+                                    <option value="BUILDER">Builder</option>
+                                </select>
+                                <span class="chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="3">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg></span>
+                            </div>
+                        </div>
 
-<script>
-/* ── Custom Modal Logic ───────────────────────────────── */
-function showModal(title, text) {
-  const overlay = document.getElementById('modalOverlay');
-  const titleEl = document.getElementById('modalTitle');
-  const textEl = document.getElementById('modalText');
-  if (overlay && titleEl && textEl) {
-    titleEl.textContent = title;
-    textEl.textContent = text;
-    overlay.classList.add('active');
-  }
-}
+                    </div>
 
-function closeModal() {
-  const overlay = document.getElementById('modalOverlay');
-  if (overlay) overlay.classList.remove('active');
-}
+                    <div class="divider"></div>
 
-/* ── Form State Management ──────────────────────────────── */
-function checkForm() {
-  const btn = document.getElementById('predictBtn');
-  const b = parseFloat(document.getElementById('bedrooms').value);
-  const ba = parseFloat(document.getElementById('bathrooms').value);
-  const a = parseFloat(document.getElementById('area').value);
+                    <div class="btn-row">
+                        <button class="btn-ghost" onclick="clearForm()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                            Clear All
+                        </button>
+                        <button class="btn-predict" id="predictBtn" onclick="predict()" disabled>
+                            <span class="btn-label" style="display:flex;align-items:center;gap:10px">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                </svg>
+                                Predict Rent
+                            </span>
+                            <span class="btn-spin">
+                                <div class="ring"></div>
+                            </span>
+                        </button>
+                    </div>
+                </div>
 
-  if (btn) {
-    const isValid = !isNaN(b) && b > 0 && !isNaN(ba) && ba > 0 && !isNaN(a) && a > 0;
-    btn.disabled = !isValid;
-  }
-}
+                <!-- Result Side -->
+                <div class="result-pane" id="resultPane">
 
-document.addEventListener('DOMContentLoaded', () => {
-  ['bedrooms', 'bathrooms', 'area'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('keydown', (e) => {
-        if (['e', 'E', '+', '-', '.'].includes(e.key)) e.preventDefault();
-      });
-      el.addEventListener('input', checkForm);
-      el.addEventListener('change', checkForm);
-    }
-  });
-  checkForm();
-});
+                    <!-- Placeholder -->
+                    <div class="result-placeholder" id="resultPlaceholder">
+                        <div style="opacity: 0.12; margin-bottom: 24px;">
+                            <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <p style="font-size: 15px; font-weight: 500;">Ready to Predict</p>
+                        <p style="font-size: 13.5px; opacity: 0.6; margin-top: 6px;">Provide details to generate
+                            dashboard</p>
+                    </div>
 
-/* ── Rent Prediction Interaction logic ──────────────────── */
-function fmt(n) {
-  return '₹\u00A0' + n.toLocaleString('en-IN');
-}
+                    <!-- Real Content -->
+                    <div class="result-content" id="resultContent">
+                        <div class="result-header">
+                            <div class="result-label">Estimated Monthly Rent</div>
+                            <div class="result-amount" id="resultAmount">₹ 0<span class="result-unit">/ mo</span></div>
+                            <div class="result-meta" id="resultMeta">—</div>
+                        </div>
 
-async function predict() {
-  const btn = document.getElementById('predictBtn');
-  const resultPane = document.getElementById('resultPane');
-  
-  const bVal = document.getElementById('bedrooms').value;
-  const baVal = document.getElementById('bathrooms').value;
-  const aVal = document.getElementById('area').value;
-  const furnish = document.getElementById('furnish').value;
-  const proptype = document.getElementById('proptype').value;
-  const city = document.getElementById('city').value;
-  const seller = document.getElementById('seller').value;
+                        <div class="chips" id="resultChips">
+                            <!-- Dynamic Icons will be added here via JS -->
+                        </div>
 
-  if (!btn || !bVal || !baVal || !aVal) return;
+                        <div class="conf-card">
+                            <div class="conf-val-row">
+                                <span class="conf-label">Model Reliability (R²)</span>
+                                <span class="conf-val" id="confVal">—</span>
+                            </div>
+                            <div class="conf-track">
+                                <div class="conf-fill" id="confFill"></div>
+                            </div>
+                        </div>
+                    </div>
 
-  btn.classList.add('loading');
-  
-  const data = {
-    bedroom: parseInt(bVal),
-    bathroom: parseInt(baVal),
-    area: parseInt(aVal),
-    furnish_type: furnish,
-    city: city,
-    property_type: proptype,
-    seller_type: seller
-  };
+                </div><!-- /result-pane -->
 
-  try {
-    const response = await fetch('/predict', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
+            </div><!-- /split-container -->
+        </div><!-- /card -->
 
-    const result = await response.json();
+    </main>
 
-    if (response.ok && result.success) {
-      const rent = result.predicted_price;
-      
-      document.getElementById('resultAmount').innerHTML = fmt(rent) + '<span class="result-unit">/ mo</span>';
-      document.getElementById('resultMeta').innerHTML = `
+    <script>
+        /* ── Custom Modal Logic ───────────────────────────────── */
+        function showModal(title, text) {
+            const overlay = document.getElementById('modalOverlay');
+            const titleEl = document.getElementById('modalTitle');
+            const textEl = document.getElementById('modalText');
+            if (overlay && titleEl && textEl) {
+                titleEl.textContent = title;
+                textEl.textContent = text;
+                overlay.classList.add('active');
+            }
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('modalOverlay');
+            if (overlay) overlay.classList.remove('active');
+        }
+
+        /* ── Form State Management ──────────────────────────────── */
+        function checkForm() {
+            const btn = document.getElementById('predictBtn');
+            const b = parseFloat(document.getElementById('bedrooms').value);
+            const ba = parseFloat(document.getElementById('bathrooms').value);
+            const a = parseFloat(document.getElementById('area').value);
+
+            if (btn) {
+                const isValid = !isNaN(b) && b > 0 && !isNaN(ba) && ba > 0 && !isNaN(a) && a > 0;
+                btn.disabled = !isValid;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            ['bedrooms', 'bathrooms', 'area'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('keydown', (e) => {
+                        if (['e', 'E', '+', '-', '.'].includes(e.key)) e.preventDefault();
+                    });
+                    el.addEventListener('input', checkForm);
+                    el.addEventListener('change', checkForm);
+                }
+            });
+            checkForm();
+        });
+
+        /* ── Rent Prediction Interaction logic ──────────────────── */
+        function fmt(n) {
+            return '₹\u00A0' + n.toLocaleString('en-IN');
+        }
+
+        async function predict() {
+            const btn = document.getElementById('predictBtn');
+            const resultPane = document.getElementById('resultPane');
+
+            const bVal = document.getElementById('bedrooms').value;
+            const baVal = document.getElementById('bathrooms').value;
+            const aVal = document.getElementById('area').value;
+            const furnish = document.getElementById('furnish').value;
+            const proptype = document.getElementById('proptype').value;
+            const city = document.getElementById('city').value;
+            const seller = document.getElementById('seller').value;
+
+            if (!btn || !bVal || !baVal || !aVal) return;
+
+            btn.classList.add('loading');
+
+            const data = {
+                bedroom: parseInt(bVal),
+                bathroom: parseInt(baVal),
+                area: parseInt(aVal),
+                furnish_type: furnish,
+                city: city,
+                property_type: proptype,
+                seller_type: seller
+            };
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    const rent = result.predicted_price;
+
+                    document.getElementById('resultAmount').innerHTML = fmt(rent) + '<span class="result-unit">/ mo</span>';
+                    document.getElementById('resultMeta').innerHTML = `
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg>
         Market prediction for <strong>${city}</strong>`;
 
-      document.getElementById('resultChips').innerHTML = `
+                    document.getElementById('resultChips').innerHTML = `
         <div class="chip-row">
           <span class="chip-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18M9 3v18"/></svg></span>
           ${bVal} Bedrooms (${proptype})
@@ -704,45 +1079,46 @@ async function predict() {
         </div>
       `;
 
-      const conf = 89;
-      document.getElementById('confVal').textContent = conf + '%';
-      
-      if (resultPane) resultPane.classList.add('active');
-      
-      const cf = document.getElementById('confFill');
-      if (cf) {
-        cf.style.width = '0%';
-        setTimeout(() => { cf.style.width = conf + '%'; }, 100);
-      }
-    } else {
-      showModal("Prediction Error", result.error || "Calculation failed.");
-    }
-  } catch (error) {
-    showModal("Connection Error", "Server is unreachable.");
-  } finally {
-    btn.classList.remove('loading');
-  }
-}
+                    const conf = 89;
+                    document.getElementById('confVal').textContent = conf + '%';
 
-function clearForm() {
-  ['bedrooms','bathrooms','area'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  document.getElementById('city').value = 'Mumbai';
-  document.getElementById('furnish').value = 'Semi-Furnished';
-  document.getElementById('proptype').value = 'Apartment';
-  document.getElementById('seller').value = 'OWNER';
-  
-  const resultPane = document.getElementById('resultPane');
-  if (resultPane) resultPane.classList.remove('active');
-  
-  const cf = document.getElementById('confFill');
-  if (cf) cf.style.width = '0%';
-  
-  checkForm();
-}
-</script>
+                    if (resultPane) resultPane.classList.add('active');
+
+                    const cf = document.getElementById('confFill');
+                    if (cf) {
+                        cf.style.width = '0%';
+                        setTimeout(() => { cf.style.width = conf + '%'; }, 100);
+                    }
+                } else {
+                    showModal("Prediction Error", result.error || "Calculation failed.");
+                }
+            } catch (error) {
+                showModal("Connection Error", "Server is unreachable.");
+            } finally {
+                btn.classList.remove('loading');
+            }
+        }
+
+        function clearForm() {
+            ['bedrooms', 'bathrooms', 'area'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            document.getElementById('city').value = 'Mumbai';
+            document.getElementById('furnish').value = 'Semi-Furnished';
+            document.getElementById('proptype').value = 'Apartment';
+            document.getElementById('seller').value = 'OWNER';
+
+            const resultPane = document.getElementById('resultPane');
+            if (resultPane) resultPane.classList.remove('active');
+
+            const cf = document.getElementById('confFill');
+            if (cf) cf.style.width = '0%';
+
+            checkForm();
+        }
+    </script>
 
 </body>
+
 </html>
