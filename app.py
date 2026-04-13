@@ -37,9 +37,12 @@ def predict():
         # Predict
         prediction = model.predict(df)
         
+        # Ensure non-negative result (Linear models can predict negative for outliers)
+        final_price = max(0, float(prediction[0]))
+        
         return jsonify({
             'success': True,
-            'predicted_price': round(prediction[0], 2)
+            'predicted_price': round(final_price, 2)
         })
     except Exception as e:
         print("Prediction error:", e)
