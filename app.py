@@ -1,52 +1,60 @@
 from flask import Flask, request, jsonify, render_template
-import joblib
 import pandas as pd
+import joblib
 import os
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-# Load the trained model
-base_dir = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(base_dir, 'model', 'model.pkl')
+# -------------------- Load Model -------------------- #
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+MODEL_FILE = os.path.join(BASE_DIR, "model", "model.pkl")
 
 try:
-    model = joblib.load(model_path)
+    model = joblib.load(MODEL_FILE)
     print("Model loaded successfully.")
-except Exception as e:
-    print(f"Error loading model: {e}")
+except Exception as err:
+    print(f"Failed to load model: {err}")
     model = None
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    if model is None:
-        return jsonify({'error': 'Model is not trained or found. Please train first.'}), 500
-        
-    try:
-        data = request.json
-        print("Received prediction request:", data)
-        # Create DataFrame from input data
-        # data should be something like:
-        # { 'bedroom': 2, 'area': 1200, 'bathroom': 2, 'furnish_type': 'Furnished', 
-        #   'city': 'Ahmedabad', 'property_type': 'Apartment', 'seller_type': 'OWNER' }
-        df = pd.DataFrame([data])
-        
-        # Predict
-        prediction = model.predict(df)
-        
-        # Ensure non-negative result (Linear models can predict negative for outliers)
-        final_price = max(0, float(prediction[0]))
-        
-        return jsonify({
-            'success': True,
-            'predicted_price': round(final_price, 2)
-        })
-    except Exception as e:
-        print("Prediction error:", e)
-        return jsonify({'error': str(e)}), 400
 
-if __name__ == '__main__':
+# -------------------- Routes -------------------- #
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    if not model:
+        return jsonify({
+            "error": "Model not available. Train or provide the model first."
+        }), 500
+
+    try:
+        input_data = request.get_json()
+        print("Input received:", input_data)
+
+        # Convert input JSON to DataFrame
+        input_df = pd.DataFrame([input_data])
+
+        # Make prediction
+        result = model.predict(input_df)
+
+        # Prevent negative price
+        price = max(0, float(result[0]))
+
+        return jsonify({
+            "success": True,
+            "predicted_price": round(price, 2)
+        })
+
+    except Exception as err:
+        print("Error during prediction:", err)
+        return jsonify({
+            "error": str(err)
+        }), 400
+
+
+# -------------------- Run App -------------------- #
+if __name__ == "__main__":
     app.run(debug=True, port=5000)
